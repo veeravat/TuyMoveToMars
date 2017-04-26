@@ -39,7 +39,7 @@ bot.dialog('/', [
     },
     function(session, results) {
         num2 = results.response;
-        var total = num1 + num2;
+        var total = Number(num1) + Number(num2);
         session.send('ผมรวมได้ = %d ไงละเก่งปะล่า ', total);
     }
 
