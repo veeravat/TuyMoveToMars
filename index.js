@@ -63,7 +63,7 @@ bot.dialog('/setnum1', [
         session.endDialogWithResult(results);
     }
 ]);
-bot.dialog('/setnum1', [
+bot.dialog('/setnum2', [
     function(session) {
         builder.Prompts.text(session, 'ใส่เลขต่อไปมาเล้ยย !!');
     },
