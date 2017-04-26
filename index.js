@@ -34,10 +34,41 @@ bot.dialog('/', [
 ]);
 
 bot.dialog('/askName', [
+    // function(session) {
+    //     builder.Prompts.text(session, 'Hi! What is your name?');
+    // },
     function(session) {
-        builder.Prompts.text(session, 'Hi! What is your name?');
+        session.beginDialog('/ensureProfile', session.userData.profile);
     },
     function(session, results) {
-        session.endDialogWithResult(results);
+        session.userData.profile = results.profile;
+        session.send('Hello %s!', session.userData.profile.name);
+    }
+]);
+
+bot.dialog('/ensureProfile', [
+    function(session, args, next) {
+        session.dialogData.profile = args || {};
+        if (!args.profile.name) {
+            builder.Prompts.text(session, "Hi! What is your name?");
+        } else {
+            next();
+        }
+    },
+    function(session, results, next) {
+        if (results.response) {
+            session.dialogData.profile.name = results.response;
+        }
+        if (!args.profile.email) {
+            builder.Prompts.text(session, "What's your email address?");
+        } else {
+            next();
+        }
+    },
+    function(session, results) {
+        if (results.response) {
+            session.dialogData.profile.email = results.response;
+        }
+        session.endDialogWithResults({ repsonse: session.dialogData.profile })
     }
 ]);
