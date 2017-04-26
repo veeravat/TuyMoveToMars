@@ -34,9 +34,6 @@ bot.dialog('/', [
 ]);
 
 bot.dialog('/askName', [
-    // function(session) {
-    //     builder.Prompts.text(session, 'Hi! What is your name?');
-    // },
     function(session) {
         session.beginDialog('/ensureProfile', session.userData.profile);
     },
