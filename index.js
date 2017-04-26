@@ -17,7 +17,8 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 var bot = new builder.UniversalBot(connector);
-
+var num1;
+var num2;
 // If a Post request is made to /api/messages on port 3978 of our local server, then we pass it to the bot connector to handle
 server.post('/api/messages', connector.listen());
 // =========================================================
@@ -30,42 +31,43 @@ bot.dialog('/', [
     },
     function(session, results) {
         session.send('Hello %s!', results.response);
+    },
+    function(session) {
+        session.beginDialog('/setnum1');
+    },
+    function(session, results) {
+        num1 = results.response;
+        session.beginDialog('/setnum2');
+    },
+    function(session, results) {
+        num2 = results.response;
+        var total = num1 + num2;
+        session.send('ผมรวมได้ = %d ไงละเก่งปะล่า ', total);
     }
+
 ]);
 
 bot.dialog('/askName', [
     function(session) {
-        session.beginDialog('/ensureProfile', session.userData.profile);
+        builder.Prompts.text(session, 'Hi! What is your name?');
     },
     function(session, results) {
-        session.userData.profile = results.profile;
-        session.send('Hello %s!', session.userData.profile.name);
+        session.endDialogWithResult(results);
     }
 ]);
-
-bot.dialog('/ensureProfile', [
-    function(session, args, next) {
-        session.dialogData.profile = args || {};
-        if (!args.profile.name) {
-            builder.Prompts.text(session, "Hi! What is your name?");
-        } else {
-            next();
-        }
-    },
-    function(session, results, next) {
-        if (results.response) {
-            session.dialogData.profile.name = results.response;
-        }
-        if (!args.profile.email) {
-            builder.Prompts.text(session, "What's your email address?");
-        } else {
-            next();
-        }
+bot.dialog('/setnum1', [
+    function(session) {
+        builder.Prompts.text(session, 'Ok มาบวกเลขกัน !!\nใส่ตัวเลขแรกมาเลยจ้า');
     },
     function(session, results) {
-        if (results.response) {
-            session.dialogData.profile.email = results.response;
-        }
-        session.endDialogWithResults({ repsonse: session.dialogData.profile })
+        session.endDialogWithResult(results);
+    }
+]);
+bot.dialog('/setnum1', [
+    function(session) {
+        builder.Prompts.text(session, 'ใส่เลขต่อไปมาเล้ยย !!');
+    },
+    function(session, results) {
+        session.endDialogWithResult(results);
     }
 ]);
