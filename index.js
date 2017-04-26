@@ -31,8 +31,6 @@ bot.dialog('/', [
     },
     function(session, results) {
         session.send('Hello %s!', results.response);
-    },
-    function(session) {
         session.beginDialog('/setnum1');
     },
     function(session, results) {
